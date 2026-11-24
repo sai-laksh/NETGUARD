@@ -1,0 +1,71 @@
+[
+  {
+    "id": "RULE-VOL-01",
+    "category": "Unusual Traffic Volume",
+    "name": "Excessive Bandwidth Anomaly (Potential Exfiltration / DoS)",
+    "description": "Flags any host whose sustained transmission rate exceeds 300 Mbps or 10,000 packets per minute for more than 45 seconds.",
+    "severity": "High",
+    "parameters": {
+      "threshold_rate_mbps": 300,
+      "packet_rate_ppm": 10000,
+      "time_window_seconds": 45
+    },
+    "heuristic": "Baseline bandwidth deviations computed against 24-hour campus rolling average.",
+    "action": "Generate High Alert, trigger NetFlow capture, alert SOC team."
+  },
+  {
+    "id": "RULE-AUTH-02",
+    "category": "Repeated Failed Connection Attempts",
+    "name": "Brute-Force Authentication Attempt (SSH / RDP / Telnet)",
+    "description": "Detects more than 5 consecutive TCP connection resets or authentication rejection responses within a 60-second window directed at management ports (22, 3389, 23).",
+    "severity": "Critical",
+    "parameters": {
+      "target_ports": [22, 3389, 23],
+      "max_failed_attempts": 5,
+      "time_window_seconds": 60
+    },
+    "heuristic": "Tracks TCP RST flag and packet count per source-destination port tuple.",
+    "action": "Generate Critical Alert, isolate attacking source host from access switch port."
+  },
+  {
+    "id": "RULE-PAT-03",
+    "category": "Unusual Communication Patterns",
+    "name": "Unauthorized Cross-Subnet Traversal (ACL Violation)",
+    "description": "Identifies non-administrative subnets (e.g., Student VLAN 10) attempting direct connection to confidential administration databases or financial records without going through the authorized bastion/proxy.",
+    "severity": "Critical",
+    "parameters": {
+      "restricted_subnets": ["10.10.30.0/24", "10.10.40.50"],
+      "source_subnets": ["10.10.10.0/24"],
+      "sensitive_ports": [3306, 5432, 1521, 445]
+    },
+    "heuristic": "Compares Layer 3 source IP and Layer 4 destination port against campus Zero-Trust matrix.",
+    "action": "Log ACL drop, trigger Critical Alert, notify Administrator."
+  },
+  {
+    "id": "RULE-DEV-04",
+    "category": "Unexpected Device Activity",
+    "name": "Off-Hours Transmission & Out-of-Profile Protocol Use",
+    "description": "Detects workstation or printer endpoints transmitting anomalous traffic during off-hours (22:00 - 06:00) or initiating unexpected outbound peer-to-peer/IRC protocol connections.",
+    "severity": "Medium",
+    "parameters": {
+      "off_hours_window": "22:00-06:00",
+      "abnormal_protocols": ["IRC", "BitTorrent", "P2P", "Raw Sockets"]
+    },
+    "heuristic": "Applies device persona baseline modeling comparing current protocol signature to device role.",
+    "action": "Generate Medium Alert, flag device as 'Requires Attention'."
+  },
+  {
+    "id": "RULE-PORT-05",
+    "category": "Unusual Port Activity",
+    "name": "Sequential / Fast TCP SYN Port Scanning",
+    "description": "Detects an endpoint sending SYN packets to 10 or more distinct destination ports on a single host or across multiple hosts within 15 seconds without completing the 3-way handshake.",
+    "severity": "Medium",
+    "parameters": {
+      "unique_ports_threshold": 10,
+      "time_window_seconds": 15,
+      "syn_ack_ratio_threshold": 0.1
+    },
+    "heuristic": "Measures SYN:ACK ratio and port diversity index in incoming packet stream.",
+    "action": "Flag as Reconnaissance Attempt, record IP in suspicious actors list."
+  }
+]

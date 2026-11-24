@@ -1,0 +1,69 @@
+{
+  "topologyName": "Smart Campus Core & Access Topology",
+  "projectVersion": "Packet Tracer 8.2 Compatible",
+  "segments": [
+    {
+      "id": "segment-core",
+      "name": "Campus Backbone & Gateway",
+      "vlan": 1,
+      "subnet": "10.10.0.0/24",
+      "gateway": "10.10.0.1",
+      "description": "High-throughput fiber backbone connecting core router and distribution multilayer switch."
+    },
+    {
+      "id": "segment-student",
+      "name": "Student Network",
+      "vlan": 10,
+      "subnet": "10.10.10.0/24",
+      "gateway": "10.10.10.1",
+      "description": "Lab workstations, library access terminals, and BYOD wireless access points."
+    },
+    {
+      "id": "segment-faculty",
+      "name": "Faculty Network",
+      "vlan": 20,
+      "subnet": "10.10.20.0/24",
+      "gateway": "10.10.20.1",
+      "description": "Department faculty desktops, research computers, and departmental network printers."
+    },
+    {
+      "id": "segment-admin",
+      "name": "Administration Network",
+      "vlan": 30,
+      "subnet": "10.10.30.0/24",
+      "gateway": "10.10.30.1",
+      "description": "Registrar, finance, and executive offices with strict ACL isolation."
+    },
+    {
+      "id": "segment-server",
+      "name": "Server Network & Data Center",
+      "vlan": 40,
+      "subnet": "10.10.40.0/24",
+      "gateway": "10.10.40.1",
+      "description": "Campus DNS/DHCP, Web ERP, database, and NetGuard security analysis sensor."
+    }
+  ],
+  "links": [
+    {"source": "DEV-R01", "target": "DEV-SW01", "type": "10G Fiber Trunk", "status": "UP"},
+    {"source": "DEV-SW01", "target": "DEV-SW-STU", "type": "1G Ethernet Trunk (VLAN 10)", "status": "UP"},
+    {"source": "DEV-SW01", "target": "DEV-SW-FAC", "type": "1G Ethernet Trunk (VLAN 20)", "status": "UP"},
+    {"source": "DEV-SW01", "target": "DEV-SW-ADM", "type": "1G Ethernet Trunk (VLAN 30)", "status": "UP"},
+    {"source": "DEV-SW01", "target": "DEV-SW-SRV", "type": "10G Fiber Trunk (VLAN 40)", "status": "UP"},
+    {"source": "DEV-SW-STU", "target": "DEV-AP-LIB", "type": "FastEthernet", "status": "UP"},
+    {"source": "DEV-SW-STU", "target": "DEV-PC-LAB1", "type": "FastEthernet", "status": "WARNING"},
+    {"source": "DEV-SW-STU", "target": "DEV-PC-LAB2", "type": "FastEthernet", "status": "UP"},
+    {"source": "DEV-AP-LIB", "target": "DEV-BYOD-01", "type": "802.11ac Wireless", "status": "WARNING"},
+    {"source": "DEV-AP-LIB", "target": "DEV-BYOD-02", "type": "802.11ac Wireless", "status": "UP"},
+    {"source": "DEV-SW-FAC", "target": "DEV-PC-CS01", "type": "GigabitEthernet", "status": "UP"},
+    {"source": "DEV-SW-FAC", "target": "DEV-PC-RES1", "type": "GigabitEthernet", "status": "UP"},
+    {"source": "DEV-SW-FAC", "target": "DEV-PC-FAC02", "type": "GigabitEthernet", "status": "UP"},
+    {"source": "DEV-SW-FAC", "target": "DEV-PRN-FAC", "type": "FastEthernet", "status": "DOWN"},
+    {"source": "DEV-SW-ADM", "target": "DEV-PC-REG", "type": "GigabitEthernet", "status": "UP"},
+    {"source": "DEV-SW-ADM", "target": "DEV-PC-FIN", "type": "GigabitEthernet", "status": "UP"},
+    {"source": "DEV-SW-ADM", "target": "DEV-PC-DEAN", "type": "GigabitEthernet", "status": "UP"},
+    {"source": "DEV-SW-SRV", "target": "DEV-SRV-DNS", "type": "GigabitEthernet", "status": "UP"},
+    {"source": "DEV-SW-SRV", "target": "DEV-SRV-WEB", "type": "10G SFP+", "status": "UP"},
+    {"source": "DEV-SW-SRV", "target": "DEV-SRV-ERP", "type": "10G SFP+", "status": "WARNING"},
+    {"source": "DEV-SW-SRV", "target": "DEV-SRV-MON", "type": "SPAN Port Mirror", "status": "UP"}
+  ]
+}

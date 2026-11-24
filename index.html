@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NETGUARD – Smart Campus Network Monitoring and Security System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Chart.js CDN with offline fallback built into js/charts.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ======================================================================
+       SIDEBAR NAVIGATION
+       ====================================================================== -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-shield">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.7c0 4.67-3.13 9.04-7 10.15-3.87-1.11-7-5.48-7-10.15V6.3l7-3.12zM11 7v6h2V7h-2zm0 8v2h2v-2h-2z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>NETGUARD</h1>
+        <p>Smart Campus SOC</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Operations</div>
+      <a href="#dashboard" class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#network-overview" class="nav-item" data-view="network-overview">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <span>Network Overview</span>
+      </a>
+      <a href="#traffic" class="nav-item" data-view="traffic">
+        <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+        <span>Traffic Monitoring</span>
+      </a>
+
+      <div class="nav-section-label">Security & Response</div>
+      <a href="#threat-detection" class="nav-item" data-view="threat-detection">
+        <svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg>
+        <span>Threat Detection</span>
+      </a>
+      <a href="#security-alerts" class="nav-item" data-view="security-alerts">
+        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+        <span>Security Alerts</span>
+        <span class="nav-badge" id="sidebarAlertsBadge">4</span>
+      </a>
+      <a href="#devices" class="nav-item" data-view="devices">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16v10H4zm16 12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4z"/></svg>
+        <span>Devices</span>
+      </a>
+
+      <div class="nav-section-label">Analytics & System</div>
+      <a href="#reports" class="nav-item" data-view="reports">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span>Reports</span>
+      </a>
+      <a href="#settings" class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="project-meta-box">
+        <div class="title">
+          <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          CN Capstone Project
+        </div>
+        <div class="sub">Simulated Network Engine &bull; Ready for Wireshark & Cisco Packet Tracer</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======================================================================
+       MAIN CONTENT CONTAINER
+       ====================================================================== -->
+  <div class="main-wrapper">
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation">
+          <svg style="width: 22px; height: 22px; fill: currentColor;" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
+
+        <div class="status-indicator-pill" id="topbarStatusPill">
+          <span class="pulse-dot" id="topbarPulseDot"></span>
+          <span id="topbarStatusText">SYSTEM ACTIVE: NORMAL</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Live Clock -->
+        <div class="live-clock-widget">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          <span class="live-clock-time" id="liveClockText">Loading time...</span>
+        </div>
+
+        <!-- Notification Bell -->
+        <div class="notification-container">
+          <button class="icon-btn" id="notificationBellBtn" title="Security Notifications">
+            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="badge-counter" id="bellBadgeCounter">4</span>
+          </button>
+
+          <!-- Notification Dropdown -->
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header">
+              <span>Security Event Feed</span>
+              <span class="chart-badge">LIVE SOC</span>
+            </div>
+            <div class="notification-list" id="notificationList">
+              <!-- Rendered via JS -->
+            </div>
+            <div class="dropdown-footer">
+              <a href="#security-alerts" onclick="NetGuardApp.navigateTo('security-alerts');">View All Security Alerts &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Profile -->
+        <div class="user-profile-badge">
+          <div class="user-avatar">SOC</div>
+          <div class="user-info">
+            <span class="user-name">Security Analyst</span>
+            <span class="user-role">Administrator</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Views Body -->
+    <main class="content-body">
+
+      <!-- ==================================================================
+           PAGE 1: DASHBOARD
+           ================================================================== -->
+      <section class="page-view active" id="view-dashboard">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+              Campus Security Operations Center
+            </h2>
+            <p>Real-time telemetry, threat detection analysis, and campus network health monitoring.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" onclick="NetGuardApp.navigateTo('network-overview');">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
+              View Network Topology
+            </button>
+            <button class="btn btn-outline" onclick="NetGuardApp.navigateTo('traffic');">
+              <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+              Live Traffic
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Metric Cards (6 Cards) -->
+        <div class="metrics-grid">
+          <!-- Total Devices -->
+          <div class="metric-card normal">
+            <div class="metric-card-header">
+              <span class="metric-title">Total Devices</span>
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 6h16v10H4zm16 12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4z"/></svg>
+              </div>
+            </div>
+            <div class="metric-value" id="statTotalDevices">22</div>
+            <div class="metric-footer">
+              <span class="metric-trend-good">4 Subnets</span> &bull; 100% Configured
+            </div>
+          </div>
+
+          <!-- Active Devices -->
+          <div class="metric-card normal">
+            <div class="metric-card-header">
+              <span class="metric-title">Active Devices</span>
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </div>
+            </div>
+            <div class="metric-value" id="statActiveDevices">21</div>
+            <div class="metric-footer">
+              <span class="metric-trend-good">95.4%</span> connected to gateway
+            </div>
+          </div>
+
+          <!-- Network Traffic -->
+          <div class="metric-card normal">
+            <div class="metric-card-header">
+              <span class="metric-title">Network Traffic</span>
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+              </div>
+            </div>
+            <div class="metric-value" id="statNetworkTraffic">368.5 Mbps</div>
+            <div class="metric-footer">
+              <span class="metric-trend-good">Rx 212 / Tx 156</span> Mbps
+            </div>
+          </div>
+
+          <!-- Suspicious Activities -->
+          <div class="metric-card warning">
+            <div class="metric-card-header">
+              <span class="metric-title">Suspicious Activities</span>
+              <div class="metric-icon" style="color: var(--color-warning);">
+                <svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg>
+              </div>
+            </div>
+            <div class="metric-value" id="statSuspiciousActivities">4</div>
+            <div class="metric-footer">
+              <span class="metric-trend-warn">Action Required</span> &bull; 2 In-Progress
+            </div>
+          </div>
+
+          <!-- Critical Alerts -->
+          <div class="metric-card critical">
+            <div class="metric-card-header">
+              <span class="metric-title">Critical Alerts</span>
+              <div class="metric-icon" style="color: var(--color-critical);">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              </div>
+            </div>
+            <div class="metric-value" id="statCriticalAlerts" style="color: var(--color-critical);">2</div>
+            <div class="metric-footer">
+              <span class="metric-trend-bad">Brute-Force & ACL</span> violations
+            </div>
+          </div>
+
+          <!-- Network Health -->
+          <div class="metric-card normal">
+            <div class="metric-card-header">
+              <span class="metric-title">Network Health</span>
+              <div class="metric-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </div>
+            </div>
+            <div class="metric-value" id="statNetworkHealth" style="color: var(--accent-highlight);">92%</div>
+            <div class="metric-footer">
+              <span class="metric-trend-good">Campus Core Status: Optimal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Visual SOC Charts (2x2 Grid) -->
+        <div class="charts-grid-2x2">
+          <!-- Chart 1: Traffic Over Time -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+                Network Traffic Over Time (Mbps)
+              </div>
+              <span class="chart-badge">7-HOUR TREND</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartTrafficOverTime"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Normal vs Suspicious Traffic -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2 0v8.99H22c-.47-4.74-4.24-8.52-9-8.99zm0 11.01V22c4.76-.46 8.53-4.25 9-8.99H13z"/></svg>
+                Traffic Classification (Packet Ratio)
+              </div>
+              <span class="chart-badge">HEURISTIC INSPECTION</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartTrafficType"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 3: Security Alerts by Severity -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+                Security Alerts by Severity
+              </div>
+              <span class="chart-badge">ACTIVE INCIDENTS</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartAlertsSeverity"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 4: Device Distribution by Department -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
+                Device Distribution by Department
+              </div>
+              <span class="chart-badge">VLAN SEGMENTATION</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartDeviceDist"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Security Events Section -->
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">
+              <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              Recent Security Events & Suspicious Patterns
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="NetGuardApp.navigateTo('security-alerts');">
+              Manage All Alerts &rarr;
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Activity Detected</th>
+                  <th>Source IP</th>
+                  <th>Severity</th>
+                  <th>Timestamp</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardRecentEventsBody">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================================================================
+           PAGE 2: NETWORK OVERVIEW (TOPOLOGY)
+           ================================================================== -->
+      <section class="page-view" id="view-network-overview">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
+              Simulated Campus Network Topology
+            </h2>
+            <p>Visual map of campus network segments, interconnecting trunks, routers, switches, servers and host devices.</p>
+          </div>
+          <div class="header-actions">
+            <span class="chart-badge">PACKET TRACER 8.2 ARCHITECTURE</span>
+          </div>
+        </div>
+
+        <div class="topology-container">
+          <div class="topology-controls-bar">
+            <div class="segment-pills">
+              <button class="segment-btn active" onclick="document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); NetGuardTopology.setSegmentFilter('All');">All Segments</button>
+              <button class="segment-btn" onclick="document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); NetGuardTopology.setSegmentFilter('Student');">Student Subnet (VLAN 10)</button>
+              <button class="segment-btn" onclick="document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); NetGuardTopology.setSegmentFilter('Faculty');">Faculty Subnet (VLAN 20)</button>
+              <button class="segment-btn" onclick="document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); NetGuardTopology.setSegmentFilter('Administration');">Administration (VLAN 30)</button>
+              <button class="segment-btn" onclick="document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); NetGuardTopology.setSegmentFilter('Server');">Server Farm (VLAN 40)</button>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">
+              Click on any node to open the Device Inspection Drawer
+            </div>
+          </div>
+
+          <div class="topology-canvas-area">
+            <canvas id="topologyCanvas"></canvas>
+
+            <!-- Node Details Drawer -->
+            <div class="node-drawer" id="nodeDrawer">
+              <div class="drawer-header">
+                <span class="drawer-title" id="drawerDeviceName">Device Inspection</span>
+                <button class="close-btn" onclick="NetGuardTopology.closeDrawer()">&times;</button>
+              </div>
+              <div class="drawer-body">
+                <div class="drawer-row">
+                  <span class="drawer-label">Device ID:</span>
+                  <span class="drawer-val font-mono" id="drawerDeviceId">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">IP Address:</span>
+                  <span class="drawer-val font-mono" id="drawerDeviceIp">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">MAC Address:</span>
+                  <span class="drawer-val font-mono" id="drawerDeviceMac">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">Segment:</span>
+                  <span class="drawer-val" id="drawerDeviceSegment">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">Device Type:</span>
+                  <span class="drawer-val" id="drawerDeviceType">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">Hardware Model:</span>
+                  <span class="drawer-val" id="drawerDeviceModel">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">Uptime:</span>
+                  <span class="drawer-val" id="drawerDeviceUptime">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">Throughput Rate:</span>
+                  <span class="drawer-val" id="drawerDeviceTraffic">-</span>
+                </div>
+                <div class="drawer-row">
+                  <span class="drawer-label">Status:</span>
+                  <span id="drawerDeviceStatus" class="status-pill online">Online</span>
+                </div>
+
+                <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                  <button class="btn btn-primary btn-sm" onclick="NetGuardTopology.runPingDiagnostics()">
+                    Run ICMP Ping Diagnostics
+                  </button>
+                  <pre id="drawerPingOutput" class="code-block" style="display: none;"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topology-legend">
+            <span style="font-weight: 600; color: var(--text-main);">Legend:</span>
+            <div class="legend-item"><span class="legend-color online"></span> Online Device</div>
+            <div class="legend-item"><span class="legend-color attention"></span> Requires Attention / Anomaly</div>
+            <div class="legend-item"><span class="legend-color offline"></span> Offline Node</div>
+            <div class="legend-item"><span class="legend-color trunk"></span> 10G Fiber Core Trunk</div>
+            <div class="legend-item"><span style="color: var(--accent-highlight); font-weight: bold;">&bull;</span> Animated Traffic Pulse</div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================================================================
+           PAGE 3: TRAFFIC MONITORING
+           ================================================================== -->
+      <section class="page-view" id="view-traffic">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+              Traffic Monitoring & Packet Analysis
+            </h2>
+            <p>High-resolution simulated campus network packet stream & protocol breakdown. <span style="color: var(--accent-highlight); font-weight: 600;">(SIMULATED DATA – Ready for Wireshark .pcap import)</span></p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-outline btn-sm" id="btnExportTrafficCSV">
+              <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Export Traffic CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Traffic Metric Cards (7 items) -->
+        <div class="metrics-grid">
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Incoming Traffic</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></div></div>
+            <div class="metric-value" id="trafficInboundRate">214.5 Mbps</div>
+            <div class="metric-footer"><span class="metric-trend-good">&uarr; Optimal</span> Campus Inbound Gateway</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Outgoing Traffic</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg></div></div>
+            <div class="metric-value" id="trafficOutboundRate">168.2 Mbps</div>
+            <div class="metric-footer"><span class="metric-trend-good">&darr; Stable</span> Campus Outbound Gateway</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Total Packets / Sec</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></div></div>
+            <div class="metric-value font-mono" id="trafficTotalPackets">22,450</div>
+            <div class="metric-footer">Aggregate Frame Frequency</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">TCP Packets</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div></div>
+            <div class="metric-value font-mono" id="trafficTcpPackets">16,120</div>
+            <div class="metric-footer">71.8% of Total Flow</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">UDP Packets</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div></div>
+            <div class="metric-value font-mono" id="trafficUdpPackets">5,140</div>
+            <div class="metric-footer">22.9% DNS, DHCP, Streams</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">ICMP Packets</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div></div>
+            <div class="metric-value font-mono" id="trafficIcmpPackets">890</div>
+            <div class="metric-footer">Echo Request/Replies</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Average Activity</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div></div>
+            <div class="metric-value" style="font-size: 1.25rem;" id="trafficAvgActivity">High Concurrency</div>
+            <div class="metric-footer"><span class="metric-trend-good">RTT 5.8 ms</span> Jitter &plusmn; 0.4ms</div>
+          </div>
+        </div>
+
+        <!-- Traffic Charts -->
+        <div class="charts-grid-2x2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+                Real-Time Bandwidth Stream (Inbound vs Outbound)
+              </div>
+              <span class="chart-badge" style="color: var(--accent-highlight); border-color: var(--accent-highlight);">LIVE POLLING</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartLiveTrafficStream"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2 0v8.99H22c-.47-4.74-4.24-8.52-9-8.99zm0 11.01V22c4.76-.46 8.53-4.25 9-8.99H13z"/></svg>
+                Protocol Distribution (Layer 4 & 7 Breakdown)
+              </div>
+              <span class="chart-badge">DYNAMIC FLOW INSPECTION</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartProtocolDist"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Traffic Activity Table -->
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">
+              <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+              Live Simulated Packet Capture Feed (Wireshark Emulation)
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">
+              Updates continuously with campus subnet IPs
+            </span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Packet ID</th>
+                  <th>Timestamp</th>
+                  <th>Source Address</th>
+                  <th>Destination Address</th>
+                  <th>Protocol</th>
+                  <th>Length</th>
+                  <th>Inspection Status</th>
+                </tr>
+              </thead>
+              <tbody id="trafficPacketTableBody">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================================================================
+           PAGE 4: THREAT DETECTION
+           ================================================================== -->
+      <section class="page-view" id="view-threat-detection">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg>
+              Threat Detection & Heuristic Pattern Analysis
+            </h2>
+            <p>Rule-based detection algorithms identifying predefined suspicious campus network behaviors using sample telemetry.</p>
+          </div>
+        </div>
+
+        <!-- 5 Detection Category Cards -->
+        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+          <div class="metric-card warning">
+            <div class="metric-card-header"><span class="metric-title">1. Traffic Volume</span><div class="metric-icon" style="color: var(--color-warning);"><svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg></div></div>
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.35rem;">Unusual Bandwidth Surge</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Flags sustained transfers exceeding 300 Mbps or 10k pkts/min from individual endpoints.</div>
+          </div>
+
+          <div class="metric-card critical">
+            <div class="metric-card-header"><span class="metric-title">2. Failed Connections</span><div class="metric-icon" style="color: var(--color-critical);"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div></div>
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.35rem;">Repeated Auth Failures</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">&gt; 5 failed SSH/RDP connection resets within 60s window indicating brute-force attempts.</div>
+          </div>
+
+          <div class="metric-card critical">
+            <div class="metric-card-header"><span class="metric-title">3. Communication Patterns</span><div class="metric-icon" style="color: var(--color-critical);"><svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg></div></div>
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.35rem;">Cross-VLAN Violations</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Unauthorized traversal from Student subnet directly attempting access to Admin DB ports.</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">4. Device Activity</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v10H4zm16 12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4z"/></svg></div></div>
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.35rem;">Unexpected Device Behavior</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Endpoints transmitting off-hours (22:00-06:00) or using out-of-profile non-standard protocols.</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">5. Port Activity</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></div></div>
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.35rem;">Unusual Port Probing</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Sequential TCP SYN packets across &ge;10 discrete ports within 15s without handshake completion.</div>
+          </div>
+        </div>
+
+        <!-- Detected Events Table -->
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">
+              <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg>
+              Detected Suspicious Events & Heuristic Matches
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              Rule-based evaluation of simulated telemetry
+            </span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Threat ID</th>
+                  <th>Threat Category</th>
+                  <th>Source IP</th>
+                  <th>Detection Time</th>
+                  <th>Severity</th>
+                  <th>Detection Reason</th>
+                  <th>Current Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="threatDetectionTableBody">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================================================================
+           PAGE 5: SECURITY ALERTS
+           ================================================================== -->
+      <section class="page-view" id="view-security-alerts">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+              Security Alerts Management
+            </h2>
+            <p>Filter, review, investigate and resolve active campus network security incidents. Changes persist automatically.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary btn-sm" id="btnExportAlertsCSV">
+              <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Export Alerts CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header-bar">
+            <!-- Functional Filters -->
+            <div class="segment-pills">
+              <button class="segment-btn alert-severity-btn active" data-severity="All">All Alerts</button>
+              <button class="segment-btn alert-severity-btn" data-severity="Critical" style="border-color: var(--color-critical);">Critical</button>
+              <button class="segment-btn alert-severity-btn" data-severity="High" style="border-color: var(--color-warning);">High</button>
+              <button class="segment-btn alert-severity-btn" data-severity="Medium">Medium</button>
+              <button class="segment-btn alert-severity-btn" data-severity="Low">Low</button>
+            </div>
+
+            <div class="table-search-filter">
+              <select class="select-filter" id="alertStatusFilter">
+                <option value="All">All Statuses</option>
+                <option value="New">New</option>
+                <option value="Investigating">Investigating</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+
+              <div class="search-input-group">
+                <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <input type="text" id="alertSearchInput" placeholder="Search IP, alert or rule...">
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Alert ID</th>
+                  <th>Description & Category</th>
+                  <th>Source IP</th>
+                  <th>Severity</th>
+                  <th>Timestamp</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="alertsTableBody">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+          <div style="padding: 0.75rem 1.25rem; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between;">
+            <span id="filteredAlertsCount">Loading alerts...</span>
+            <span>Status changes persist in browser localStorage & REST API</span>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================================================================
+           PAGE 6: DEVICE MANAGEMENT
+           ================================================================== -->
+      <section class="page-view" id="view-devices">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M4 6h16v10H4zm16 12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4z"/></svg>
+              Campus Device Inventory
+            </h2>
+            <p>Monitored endpoints across Student, Faculty, Administration, and Server Farm segments.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary btn-sm" id="btnExportDevicesCSV">
+              <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Export Devices CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-search-filter">
+              <div class="search-input-group">
+                <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <input type="text" id="deviceSearchInput" placeholder="Search device, IP, MAC...">
+              </div>
+
+              <select class="select-filter" id="deviceDeptSelect">
+                <option value="All">All Departments</option>
+                <option value="Student">Student Network</option>
+                <option value="Faculty">Faculty Network</option>
+                <option value="Administration">Administration</option>
+                <option value="Server">Server Farm</option>
+                <option value="Infrastructure">Infrastructure (Core)</option>
+              </select>
+
+              <select class="select-filter" id="deviceStatusSelect">
+                <option value="All">All Statuses</option>
+                <option value="Online">Online</option>
+                <option value="Attention">Attention Needed</option>
+                <option value="Offline">Offline</option>
+              </select>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--accent-highlight);" id="deviceListTotalCount">22 Devices Displayed</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Device ID</th>
+                  <th>Device Name & Model</th>
+                  <th>Type</th>
+                  <th>IP Address</th>
+                  <th>Department</th>
+                  <th>Status</th>
+                  <th>Last Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="devicesTableBody">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================================================================
+           PAGE 7: REPORTS
+           ================================================================== -->
+      <section class="page-view" id="view-reports">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+              Network Security & Activity Reports
+            </h2>
+            <p>Comprehensive incident summaries, availability audits, and functional CSV data exports for capstone evaluation.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-outline btn-sm" id="btnPrintReport">
+              <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+              Print / Save PDF
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnExportAlertsCSVReport" onclick="NetGuardData.exportAlertsToCSV(); NetGuardApp.showToast('Alerts CSV exported!', 'normal');">
+              <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Export CSV Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Report KPI Metrics Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Total 24h Traffic</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg></div></div>
+            <div class="metric-value" id="repTotalTrafficGB">482.6 GB</div>
+            <div class="metric-footer">Aggregate Across Subnets</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Peak Throughput</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></div></div>
+            <div class="metric-value" id="repPeakThroughput">412.0 Mbps</div>
+            <div class="metric-footer">Observed at Lab 1 Host 45</div>
+          </div>
+
+          <div class="metric-card warning">
+            <div class="metric-card-header"><span class="metric-title">Total Incidents</span><div class="metric-icon" style="color: var(--color-warning);"><svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg></div></div>
+            <div class="metric-value" id="repTotalIncidents">7</div>
+            <div class="metric-footer">Across 5 Threat Classes</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Resolved Incidents</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div></div>
+            <div class="metric-value" id="repResolvedIncidents">3</div>
+            <div class="metric-footer">Remediation Success: 42.8%</div>
+          </div>
+
+          <div class="metric-card normal">
+            <div class="metric-card-header"><span class="metric-title">Campus Availability</span><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div></div>
+            <div class="metric-value" id="repAvailability">99.94%</div>
+            <div class="metric-footer">Core Gateway SLA Met</div>
+          </div>
+        </div>
+
+        <!-- Meaningful Report Charts -->
+        <div class="charts-grid-2x2">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+                Incidents Logged by Threat Category
+              </div>
+              <span class="chart-badge">AUDIT BREAKDOWN</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartReportThreatCategories"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <svg style="width: 16px; height: 16px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+                Bandwidth Consumption by Campus Segment (GB/day)
+              </div>
+              <span class="chart-badge">VLAN CAPACITY AUDIT</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="chartReportSegmentBandwidth"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Export Center Card -->
+        <div class="settings-section-card">
+          <h3>
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            Automated Audit & Compliance Report Exports
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Export raw or summarized telemetry data formatted in RFC 4180 compliant CSV files for offline analysis and evaluation.
+          </p>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="NetGuardData.exportAlertsToCSV(); NetGuardApp.showToast('Security Alerts CSV downloaded.', 'normal');">
+              Download Security Alerts (.csv)
+            </button>
+            <button class="btn btn-outline" onclick="NetGuardData.exportDevicesToCSV(); NetGuardApp.showToast('Device Inventory CSV downloaded.', 'normal');">
+              Download Device Inventory (.csv)
+            </button>
+            <button class="btn btn-outline" onclick="NetGuardData.exportTrafficToCSV(); NetGuardApp.showToast('Traffic Log CSV downloaded.', 'normal');">
+              Download Traffic Telemetry (.csv)
+            </button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================================================================
+           PAGE 8: SETTINGS & PROJECT GUIDE
+           ================================================================== -->
+      <section class="page-view" id="view-settings">
+        <div class="page-header">
+          <div>
+            <h2>
+              <svg style="width: 24px; height: 24px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58z"/></svg>
+              System Settings & Integration Guide
+            </h2>
+            <p>Theme specifications, monitoring parameters, demo triggers, and Wireshark / Cisco Packet Tracer integration architecture.</p>
+          </div>
+        </div>
+
+        <!-- Interactive Demo Attack Simulation Injector -->
+        <div class="settings-section-card">
+          <h3 style="color: var(--color-warning);">
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg>
+            Interactive Capstone Viva Demonstration Controls
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Click any button below during your project demonstration to inject live simulated attacks into the NETGUARD engine. Watch the dashboard, charts, topbar alert indicator, and security alerts table update in real time!
+          </p>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-danger btn-sm" onclick="NetGuardApp.triggerSimulatedAttack('bruteforce')">
+              Simulate SSH Brute-Force Attack
+            </button>
+            <button class="btn btn-warning btn-sm" onclick="NetGuardApp.triggerSimulatedAttack('portscan')">
+              Simulate SYN Port Sweep (Recon)
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="NetGuardApp.triggerSimulatedAttack('crossvlan')">
+              Simulate Cross-VLAN Unauthorized Probing
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="NetGuardApp.triggerSimulatedAttack('volumesurge')">
+              Simulate 450 Mbps Bandwidth Surge
+            </button>
+          </div>
+        </div>
+
+        <!-- Monitoring Parameters -->
+        <div class="settings-section-card">
+          <h3>
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            Monitoring & Refresh Preferences
+          </h3>
+
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>Telemetry Refresh Interval</h4>
+              <p>Frequency at which simulated traffic graphs and packet streams poll for new activity.</p>
+            </div>
+            <div class="slider-container">
+              <input type="range" id="refreshIntervalSlider" min="1" max="10" step="1" value="3">
+              <span id="refreshIntervalDisplay" style="font-family: monospace; color: var(--accent-highlight); min-width: 80px;">3 seconds</span>
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>Pause Simulated Traffic Stream</h4>
+              <p>Temporarily freeze live stream animations for closer examination of packet frames.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="togglePauseSimulation">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Dark Emerald Green Theme Specifications -->
+        <div class="settings-section-card">
+          <h3>
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/></svg>
+            Dark Emerald Green SOC Palette Tokens
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            The NETGUARD dashboard uses an emerald-green theme designed for Security Operations Centers (SOC):
+          </p>
+
+          <div class="palette-display">
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #07140F;"></div>
+              <span class="color-name">Main Background</span>
+              <span class="color-hex">#07140F</span>
+            </div>
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #0B1C13;"></div>
+              <span class="color-name">Sidebar</span>
+              <span class="color-hex">#0B1C13</span>
+            </div>
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #10251B;"></div>
+              <span class="color-name">Dashboard Cards</span>
+              <span class="color-hex">#10251B</span>
+            </div>
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #17452F;"></div>
+              <span class="color-name">Secondary Surface</span>
+              <span class="color-hex">#17452F</span>
+            </div>
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #237A50;"></div>
+              <span class="color-name">Primary Accent</span>
+              <span class="color-hex">#237A50</span>
+            </div>
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #51D99A;"></div>
+              <span class="color-name">Highlight Accent</span>
+              <span class="color-hex">#51D99A</span>
+            </div>
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #E4F4E9;"></div>
+              <span class="color-name" style="color: #51D99A;">Soft White Text</span>
+              <span class="color-hex">#E4F4E9</span>
+            </div>
+            <div class="palette-swatch">
+              <div class="color-preview-box" style="background-color: #A5C6B0;"></div>
+              <span class="color-name">Muted Sage</span>
+              <span class="color-hex">#A5C6B0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Future Integration Guide -->
+        <div class="settings-section-card">
+          <h3>
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            Future Integration with Cisco Packet Tracer & Wireshark
+          </h3>
+          <div class="info-box" style="margin-top: 0.75rem;">
+            <p style="font-size: 0.82rem; line-height: 1.6; color: var(--text-main);">
+              <strong>Architecture Separation:</strong> NETGUARD separates the presentation layer (<span class="font-mono" style="color: var(--accent-highlight);">HTML/CSS/JS</span>) from the network data processing layer (<span class="font-mono" style="color: var(--accent-highlight);">Python & Flask</span>).
+            </p>
+            <ul style="font-size: 0.8rem; color: var(--text-muted); margin-left: 1.25rem; margin-top: 0.5rem; line-height: 1.6;">
+              <li><strong>Wireshark Integration:</strong> Wireshark packet captures can be saved as CSV or PCAP files and analyzed using <span class="font-mono" style="color: var(--accent-highlight);">pcap_analyzer.py</span>. The analyzer computes protocol distributions and identifies suspicious anomalies like port scanning and brute-force resets.</li>
+              <li><strong>Cisco Packet Tracer Integration:</strong> Network topology exports and router syslog/flow files are parsed by <span class="font-mono" style="color: var(--accent-highlight);">packet_tracer_parser.py</span> to map device statuses directly to the interactive topology diagram.</li>
+              <li><strong>Live Data Replacement:</strong> In production, replacing <span class="font-mono" style="color: var(--accent-highlight);">data/*.json</span> with dynamic feeds from the Python parser transitions NETGUARD from simulation mode into a live operational sensor.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- About Project -->
+        <div class="settings-section-card">
+          <h3>About NETGUARD Capstone Project</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
+            <strong>Project Title:</strong> NETGUARD – A Smart Campus Network Monitoring and Security System.<br>
+            <strong>Subject:</strong> Computer Networks (CN) Capstone Engineering Project.<br>
+            <strong>Technologies Used:</strong> Cisco Packet Tracer (Design), Wireshark (Traffic Analysis), Python 3 & Flask (Data Processing & Heuristics), HTML5, CSS3, JavaScript, Chart.js.<br>
+            <strong>Status:</strong> Independent Simulated Testing & Demonstration Phase.
+          </p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+
+<!-- ==========================================================================
+     MODALS
+     ========================================================================== -->
+
+<!-- Alert Details Modal -->
+<div class="modal-overlay" id="alertDetailModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>
+        <svg style="width: 20px; height: 20px; fill: var(--color-critical);" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span id="modalAlertId">ALT-2026-001</span>: Security Incident Details
+      </h3>
+      <button class="close-btn" onclick="NetGuardAlerts.closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <span id="modalAlertSeverity" class="severity-pill critical">Critical</span>
+        <span id="modalAlertStatus" class="state-pill new">New</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted);" id="modalAlertTime">-</span>
+      </div>
+
+      <div class="info-box">
+        <h4 style="color: var(--accent-highlight); margin-bottom: 0.25rem;" id="modalAlertCategory">-</h4>
+        <p style="font-size: 0.85rem;" id="modalAlertDescription">-</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="info-box">
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Source Endpoint</span>
+          <strong class="font-mono" style="color: var(--accent-highlight);" id="modalAlertSource">-</strong>
+        </div>
+        <div class="info-box">
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Target Destination</span>
+          <strong class="font-mono" style="color: var(--text-main);" id="modalAlertTarget">-</strong>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h5 style="color: var(--text-main); margin-bottom: 0.25rem;">Heuristic Detection Reason:</h5>
+        <p style="font-size: 0.8rem; color: var(--text-muted);" id="modalAlertReason">-</p>
+      </div>
+
+      <div class="info-box" style="border-left: 3px solid var(--accent-highlight);">
+        <h5 style="color: var(--accent-highlight); margin-bottom: 0.25rem;">Recommended Remediation:</h5>
+        <p style="font-size: 0.8rem; color: var(--text-main);" id="modalAlertRecommendation">-</p>
+      </div>
+
+      <div>
+        <h5 style="color: var(--text-muted); margin-bottom: 0.35rem; font-size: 0.75rem;">Synthetic Packet Stream Context (Wireshark Capture):</h5>
+        <pre class="code-block" id="modalRawPacketData"></pre>
+      </div>
+    </div>
+    <div class="modal-footer" id="modalActionButtons">
+      <!-- Buttons rendered dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Threat Rule Explanation Modal -->
+<div class="modal-overlay" id="ruleExplanationModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="ruleModalTitle">Rule-Based Detection Explanation</h3>
+      <button class="close-btn" onclick="NetGuardApp.closeRuleModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-box">
+        <h4 id="ruleModalName" style="color: var(--accent-highlight); margin-bottom: 0.35rem;">Rule Name</h4>
+        <p id="ruleModalDesc" style="color: var(--text-muted); font-size: 0.82rem;">Description</p>
+      </div>
+
+      <div class="info-box">
+        <h5 style="color: var(--text-main); margin-bottom: 0.25rem;">Predefined Trigger Threshold:</h5>
+        <p id="ruleModalThreshold" class="font-mono" style="color: var(--accent-highlight); font-size: 0.82rem;">Threshold</p>
+      </div>
+
+      <div class="info-box">
+        <h5 style="color: var(--text-main); margin-bottom: 0.25rem;">Detection Heuristic Logic:</h5>
+        <p id="ruleModalHeuristic" style="color: var(--text-muted); font-size: 0.82rem;">Heuristic</p>
+      </div>
+
+      <div class="info-box">
+        <h5 style="color: var(--text-main); margin-bottom: 0.25rem;">Prescribed Mitigation Action:</h5>
+        <p id="ruleModalAction" style="color: var(--text-main); font-size: 0.82rem;">Action</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="NetGuardApp.closeRuleModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Device Ping Diagnostics Modal -->
+<div class="modal-overlay" id="pingModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>
+        <svg style="width: 20px; height: 20px; fill: var(--accent-highlight);" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>
+        ICMP Connectivity Diagnostic
+      </h3>
+      <button class="close-btn" onclick="NetGuardApp.closePingModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 0.5rem;">
+        Testing target: <strong id="pingModalDeviceName" style="color: var(--accent-highlight);">Device</strong>
+      </div>
+      <pre class="code-block" id="pingModalOutput" style="min-height: 140px;"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="NetGuardApp.closePingModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Application Scripts -->
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/topology.js"></script>
+<script src="js/alerts.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
